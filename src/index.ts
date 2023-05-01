@@ -1,18 +1,19 @@
 import { Client } from "@notionhq/client";
+
 import dotenv from "dotenv";
 
 dotenv.config();
 
 async function main() {
+  const databseID : string = process.env.NOTION_DATABASE_ID ? process.env.NOTION_DATABASE_ID : "";
   const notion = new Client({
     auth: process.env.NOTION_TOKEN,
   });
 
-  const response = await notion.databases.query({
-    database_id: "FIXME",
+  const response = await notion.databases.query({  
+    database_id: databseID,
   });
-
-  console.log("Got response:", response);
+  console.log(response);
 }
 
 main()
