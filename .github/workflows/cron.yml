@@ -1,0 +1,27 @@
+name: Weekly Code Execution
+
+on:
+  schedule:
+    - cron: '0 21 * * 2' # Executes at 21:00 UTC every Tuesday, which is 06:00 am Korean time every Wednesday
+
+jobs:
+  execute_code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Execute code
+        run: npm start
