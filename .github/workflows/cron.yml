@@ -2,26 +2,47 @@ name: Weekly Code Execution
 
 on:
   schedule:
-    - cron: '0 21 * * 2' # Executes at 21:00 UTC every Tuesday, which is 06:00 am Korean time every Wednesday
+  # Executes at 21:00 UTC every Tuesday, which is 06:00 am Korean time every Wednesday
+    - cron: '0 21 * * 2'
 
 jobs:
   execute_code:
     runs-on: ubuntu-latest
 
+    # 해당 Job의 이름을 아래와 같이 설정하여 Actions 탭에서 확인할 수 있게 설정합니다.
+    name: notion-scheduler
+
     steps:
+       # 해당 레포지토리로 check-out하는 Action을 불러왔습니다.
       - name: Checkout code
         uses: actions/checkout@v2
-
+        
+      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
+      # 여기에서는 16 버전을 사용하고 있습니다.
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 16
           
+      # github security를 통해 생성한 secret들로 환경변수 파일을 생성합니다.
+      - name: access to secrets
+        run: |      
+          echo "NOTION_TOKEN=$NOTION_TOKEN" >> .env
+          echo "NOTION_DATABASE_ID=$NOTION_DATABASE_ID" >> .env
+          echo "LOSTARK_CLIENT_TOKEN=$LOSTARK_CLIENT_TOKEN" >> .env
+        env:
+          NOTION_TOKEN: ${{secrets.NOTION_TOKEN}}
+          NOTION_DATABASE_ID: ${{secrets.NOTION_DATABASE_ID}}
+          LOSTARK_CLIENT_TOKEN: ${{secrets.LOSTARK_CLIENT_TOKEN}}
+          
+      # 해당 프로젝트에서 사용하는 모든 라이브러리와 Surge를 설치합니다.
       - name: Install dependencies
         run: npm install
-        
+      
+      # 해당 타입스크립트 프로젝트를 빌드합니다.
       - name: Build TypeScript
         run: npm run build
 
+      # 코드를 실행합니다.
       - name: Execute code
         run: npm start
