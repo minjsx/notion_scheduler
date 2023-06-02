@@ -1,55 +1,46 @@
-name: cron
+# 해당 Job의 이름을 아래와 같이 설정하여 Actions 탭에서 확인할 수 있게 설정합니다.
+name: notion-scheduler
 
 on:
   schedule:
-    # 실제 스케쥴 작업이 시작될 cron을 등록하면 됩니다.
-    # 크론은 https://crontab.guru/ 여기서 확인하면 좋을 것 같습니다.
-    # 이 크론은 수요일 6시 에 실행됩니다.
-    - cron: '0 6 * * 3'
+  # Executes at 21:00 UTC every Tuesday, which is 06:00 am Korean time every Wednesday
+    - cron: '0 21 * * 2'
 
 jobs:
-  cron:
+  execute_code:
     runs-on: ubuntu-latest
-    # 빌드 매트릭스는 여러가지 환경에서 실행될 수 있게 끔 도움을 줍니다.
-    # 어차피 저는 테스트가 필요한 것이 아니고, 일반적인 node환경 만 필요하므로 이렇게만 설정해두겠습니다.
-    # https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    strategy:
-      matrix:
-        node-version: [12.x]
 
-    # 현재 레파지토리를 체크아웃합니다.
-    # https://github.com/actions/checkout
     steps:
-      - uses: actions/checkout@v2
-
-      # Nodejs를 셋업합니다.
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.1.0
+       # 해당 레포지토리로 check-out하는 Action을 불러왔습니다.
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
+      # 여기에서는 16 버전을 사용하고 있습니다.
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
-
-      # 캐시된 노드모듈이 있다면 그것을 쓰도록 합니다.
-      # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows#using-the-cache-action 를 참고했습니다.
-      # key: key를 활용해서 cache를 만들어 저장합니다.
-      # path: 캐시될 파일의 위치입니다.
-      # OS와 package-lock.json을 기준으로 node_modules의 캐시를 만듭니다.
-      - name: Cache node modules
-        uses: actions/cache@v2.0.0
+          node-version: 16
+          
+      # github security를 통해 생성한 secret들로 환경변수 파일을 생성합니다.
+      - name: access to secrets
+        run: |      
+          echo "NOTION_TOKEN=$NOTION_TOKEN" >> .env
+          echo "NOTION_DATABASE_ID=$NOTION_DATABASE_ID" >> .env
+          echo "LOSTARK_CLIENT_TOKEN=$LOSTARK_CLIENT_TOKEN" >> .env
         env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
+          NOTION_TOKEN: ${{secrets.NOTION_TOKEN}}
+          NOTION_DATABASE_ID: ${{secrets.NOTION_DATABASE_ID}}
+          LOSTARK_CLIENT_TOKEN: ${{secrets.LOSTARK_CLIENT_TOKEN}}
+          
+      # 해당 프로젝트에서 사용하는 모든 라이브러리와 Surge를 설치합니다.
+      - name: Install dependencies
+        run: npm install
+      
+      # 해당 타입스크립트 프로젝트를 빌드합니다.
+      - name: Build TypeScript
+        run: npm run build
 
-      # 일반적인 ci를 실행합니다.
-      - name: CI
-        run: |
-          npm ci
-
-      # cron job을 실행합니다.
-      - name: Run Cron
-        run: |
-          npm run something
+      # 코드를 실행합니다.
+      - name: Execute code
+        run: npm start
