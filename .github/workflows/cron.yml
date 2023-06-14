@@ -3,8 +3,10 @@ name: notion-scheduler
 
 on:
   schedule:
-  # Executes at 21:00 UTC every Tuesday, which is 06:00 am Korean time every Wednesday
-    - cron: '0 21 * * 2'
+  # Executes at 3:00 AM UTC every Wednesday, which is 12:00 pm Korean time every Wednesday
+  # 한국 표준시(KST)는 세계 협정시(UTC)보다 9시간 빠릅니다. 
+  # 따라서 GitHub Actions 워크플로가 한국 시간으로 오후 12:00에 실행되도록 예약하려면 cron 식이 오전 3:00 UTC에 실행되도록 설정해야 합니다.
+    - cron: '0 3 * * 3'
 
 jobs:
   execute_code:
