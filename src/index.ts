@@ -1,8 +1,10 @@
 import { updateChractersSheet, updateRaidSheet } from './sheet';
 
 async function main() {
-  await updateRaidSheet();
-  await updateChractersSheet();
+  const checkboxResult = await updateRaidSheet();  
+  console.log('체크박스 업데이트가 완료되었습니다.', checkboxResult);
+  const characterResult = await updateChractersSheet();  
+  console.log('캐릭터 업데이트가 완료되었습니다.', characterResult);
 }
 
 main()
