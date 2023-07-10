@@ -34,10 +34,10 @@
   dependencies:
     "@shopify/semaphore" "^3.0.1"
 
-"@notionhq/client@^2.2.5":
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.5.tgz#8c5152016ea769f2d885327fef45d0ef834f89b2"
-  integrity sha512-NobSaeSK0DMuxAIy2pg53Iv850tGFxXYEYacFBQgO634L1uwQv7WQCAdeFQpD3kJiEycQfSYv6RGC5VENEXjiQ==
+"@notionhq/client@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.7.tgz#f5ec04ad4ce99620c1b787c82bc1ddf3d3168fdc"
+  integrity sha512-ackhUZiCTxsDacHPfnuwfJmo7fmi6Il6BK+YByCZM5NEXVIohyEBWm/r18OQkuJzJjeC6Q+Jhh+0yhxjvWq/cA==
   dependencies:
     "@types/node-fetch" "^2.5.10"
     node-fetch "^2.6.1"

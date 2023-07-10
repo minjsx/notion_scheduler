@@ -15,7 +15,7 @@
   "author": "",
   "dependencies": {
     "@mokoko/sdk": "^0.0.6",
-    "@notionhq/client": "^2.2.5",
+    "@notionhq/client": "^2.2.7",
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
